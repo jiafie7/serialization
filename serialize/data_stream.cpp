@@ -6,6 +6,14 @@ DataStream::DataStream()
   : m_index(0)
 {}
 
+void DataStream::write(const char* data, int len)
+{
+  reserve(len);
+  int size = m_buffer.size();
+  m_buffer.resize(size + len);
+  std::memcpy(&m_buffer[size], data, len);
+}
+
 void DataStream::write(bool value)
 {
   char type = DataType::bool_type;
@@ -62,14 +70,6 @@ void DataStream::write(const char* value)
 void DataStream::write(const std::string& value)
 {
   write(value.c_str());
-}
-
-void DataStream::write(const char* data, int len)
-{
-  reserve(len);
-  int size = m_buffer.size();
-  m_buffer.resize(size + len);
-  std::memcpy(&m_buffer[size], data, len);
 }
 
 DataStream& DataStream::operator<<(bool value)
