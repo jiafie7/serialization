@@ -23,13 +23,20 @@ int main()
   for (auto it = v2.begin(); it != v2.end(); ++ it)
     std::cout << *it << '\n';
 
-  A a1("Michael", 27);
+  Student s1("Michael", 23);
   DataStream ds3;
-  ds3 << a1;
+  ds3 << s1;
 
-  A a2;
-  ds3 >> a2;
-  a2.show();
+  Student s2;
+  ds3 >> s2;
+  s2.show();
+
+  Fruit f1("Banana", "yellow");
+  DataStream ds4;
+  ds4 << f1;
+  Fruit f2;
+  ds4 >> f2;
+  f2.show();
   
   return 0;
 }

@@ -58,6 +58,11 @@ namespace melon
         void write(const std::set<T>& value);
 
         void write(const Serializable& value);
+        
+        template <typename T, typename ...Args>
+        void write_args(const T& head, const Args&... args);
+        
+        void write_args() {}
        
         DataStream& operator<<(bool value);
         DataStream& operator<<(char value);
@@ -106,6 +111,11 @@ namespace melon
         bool read(std::set<T>& value);
 
         bool read(Serializable& value);
+
+        template <typename T, typename ...Args>
+        bool read_args(T& head, Args& ...args);
+
+        bool read_args() { return true; }
 
         DataStream& operator>>(bool& value);
         DataStream& operator>>(char& value);
@@ -183,6 +193,13 @@ namespace melon
       write(len);
       for (auto it = value.begin(); it != value.end(); ++ it)
         write(*it);
+    }
+
+    template <typename T, typename ...Args>
+    void DataStream::write_args(const T& head, const Args&... args)
+    {
+      write(head);
+      write_args(args...);
     }
 
     template <typename T>
@@ -288,6 +305,13 @@ namespace melon
         value.insert(t);
       }
       return true;
+    }
+
+    template <typename T, typename ...Args>
+    bool DataStream::read_args(T& head, Args& ...args)
+    {
+      read(head);
+      return read_args(args...);
     }
 
     template <typename T>

@@ -9,14 +9,14 @@ namespace melon
 {
   namespace serialize
   {
-    class A : public Serializable
+    class Student : public Serializable
     {
       public:
-        A() = default;
-        A(const std::string& name, int age)
+        Student() = default;
+        Student(const std::string& name, int age)
           : m_name(name), m_age(age)
         {}
-        ~A() = default;
+        ~Student() = default;
 
         virtual void serialize(DataStream& stream) const
         {
@@ -46,5 +46,26 @@ namespace melon
         std::string m_name;
         int m_age;
     };
+
+    class Fruit : public Serializable
+    {
+      public:
+        Fruit() = default;
+        Fruit(const std::string& name, const std::string& color)
+          : m_name(name), m_color(color)
+        {}
+        ~Fruit() = default;
+
+        void show() const
+        {
+          std::cout << "name = " << m_name << ", color = " << m_color << '\n';
+        }
+
+        SERIALIZE(m_name, m_color);
+
+      private:
+        std::string m_name;
+        std::string m_color;
+    };  
   }
 }
