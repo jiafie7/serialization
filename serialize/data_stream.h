@@ -1,5 +1,10 @@
 #pragma once
 
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <vector>
+
 namespace melon
 {
   namespace serialize
@@ -17,6 +22,9 @@ namespace melon
           double_type,
           string_type,
         };
+        
+        DataStream();
+        ~DataStream() = default;
 
         void write(bool value);
         void write(char value);
@@ -28,8 +36,16 @@ namespace melon
         void write(const std::string& value);
         void write(const char* data, int len);
 
-        DataStream();
-        ~DataStream() = default;
+        DataStream& operator<<(bool value);
+        DataStream& operator<<(char value);
+        DataStream& operator<<(int32_t value);
+        DataStream& operator<<(int64_t value);
+        DataStream& operator<<(float value);
+        DataStream& operator<<(double value);
+        DataStream& operator<<(const char* value);
+        DataStream& operator<<(const std::string& value);
+
+        void show() const;
 
       private:
         void reserve(int len);

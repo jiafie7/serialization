@@ -72,8 +72,125 @@ void DataStream::write(const char* data, int len)
   std::memcpy(&m_buffer[size], data, len);
 }
 
+DataStream& DataStream::operator<<(bool value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(char value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(int32_t value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(int64_t value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(float value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(double value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(const char* value)
+{
+  write(value);
+  return *this;
+}
+
+DataStream& DataStream::operator<<(const std::string& value)
+{
+  write(value);
+  return *this;
+}
+
+void DataStream::show() const
+{
+  int size = m_buffer.size();
+  std::cout << "Data size = " << size << '\n';
+    
+  int i = 0;
+  while (i < size)
+  {
+    switch ((DataType)(m_buffer[i]))
+    {
+      case DataType::bool_type:
+        if ((int)(m_buffer[ ++ i]) == 0)
+          std::cout << "false";
+        else 
+          std::cout << "true";
+        ++ i;
+        break;
+      case DataType::char_type:
+        std::cout << m_buffer[ ++ i];
+        ++ i;
+        break;
+      case DataType::int32_type:
+        std::cout << *((int32_t*)(&m_buffer[ ++ i]));
+        i += 4;
+        break;
+      case DataType::int64_type:
+        std::cout << *((int64_t*)(&m_buffer[ ++ i]));
+        i += 8;
+        break;
+      case DataType::float_type:
+        std::cout << *((float*)(&m_buffer[ ++ i]));
+        i += 4;
+        break;
+      case DataType::double_type:
+        std::cout << *((double*)(&m_buffer[ ++ i]));
+        i += 8;
+        break;
+      case DataType::string_type:
+        if ((DataType)(m_buffer[ ++ i]) == DataType::int32_type)
+        {
+          int32_t len = *((int32_t*)(&m_buffer[ ++ i]));
+          i += 4;
+          std::cout << std::string(&m_buffer[i], len);
+          i += len;
+        }
+        else
+        {
+          throw std::logic_error("Invalid string length.\n");
+        }
+        break;
+      default:
+        std::cout << "Invalid data type." << '\n';
+        break;
+    }
+  }
+}
+
 void DataStream::reserve(int len)
 {
-
+  int size = m_buffer.size();
+  int capacity = m_buffer.capacity();
+  if (capacity < size + len)
+  {
+    while (capacity < size + len)
+    {
+      if (capacity == 0)
+        capacity = 1;
+      else
+        capacity *= 2;
+    }
+    m_buffer.reserve(capacity);
+  }
 }
 
