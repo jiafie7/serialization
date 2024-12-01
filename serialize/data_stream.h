@@ -44,8 +44,26 @@ namespace melon
         DataStream& operator<<(double value);
         DataStream& operator<<(const char* value);
         DataStream& operator<<(const std::string& value);
-
+        
         void show() const;
+
+        bool read(bool& value);
+        bool read(char& value);
+        bool read(int32_t& value);
+        bool read(int64_t& value);
+        bool read(float& value);
+        bool read(double& value);
+        bool read(std::string& value);
+        // bool read(const char* data, int len);
+
+        DataStream& operator>>(bool& value);
+        DataStream& operator>>(char& value);
+        DataStream& operator>>(int32_t& value);
+        DataStream& operator>>(int64_t& value);
+        DataStream& operator>>(float& value);
+        DataStream& operator>>(double& value);
+        DataStream& operator>>(std::string& value);
+
 
       private:
         void reserve(int len);

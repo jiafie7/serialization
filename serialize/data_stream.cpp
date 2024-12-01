@@ -177,6 +177,89 @@ void DataStream::show() const
   }
 }
 
+bool DataStream::read(bool& value)
+{
+  if (m_buffer[m_index] != DataType::bool_type)
+    return false;
+  ++ m_index;
+  value = m_buffer[m_index];
+  ++ m_index;
+  return true;
+}
+
+bool DataStream::read(char& value)
+{
+  if (m_buffer[m_index] != DataType::char_type)
+    return false;
+  ++ m_index;
+  value = m_buffer[m_index];
+  ++ m_index;
+  return true;
+}
+
+bool DataStream::read(int32_t& value)
+{
+  if (m_buffer[m_index] != DataType::int32_type)
+    return false;
+  ++ m_index;
+  value = *((int32_t*)(&m_buffer[m_index]));
+  m_index += 4;
+  return true;
+}
+
+bool DataStream::read(int64_t& value)
+{
+  if (m_buffer[m_index] != DataType::int64_type)
+    return false;
+  ++ m_index;
+  value = *((int64_t*)(&m_buffer[m_index]));
+  m_index += 8;
+  return true;
+}
+
+bool DataStream::read(float& value)
+{
+  if (m_buffer[m_index] != DataType::float_type)
+    return false;
+  ++ m_index;
+  value = *((float*)(&m_buffer[m_index]));
+  m_index += 4;
+  return true;
+}
+
+bool DataStream::read(double& value)
+{
+  if (m_buffer[m_index] != DataType::double_type)
+    return false;
+  ++ m_index;
+  value = *((double*)(&m_buffer[m_index]));
+  m_index += 8;
+  return true;
+}
+
+bool DataStream::read(std::string& value)
+{
+  if (m_buffer[m_index] != DataType::string_type)
+    return false;
+  ++ m_index;
+
+  int32_t len = 0;
+  read(len);
+  if (len < 0)
+    return false;
+
+  value.assign((char*)(&m_buffer[m_index]), len);
+  m_index += len;
+  return true;
+}
+
+// bool DataStream::read(const char* data, int len)
+// {
+//   std::memcpy(data, (char*)(&m_buffer[m_index]), len);
+//   m_index += len;
+//   return true;
+// }
+
 void DataStream::reserve(int len)
 {
   int size = m_buffer.size();
@@ -192,5 +275,47 @@ void DataStream::reserve(int len)
     }
     m_buffer.reserve(capacity);
   }
+}
+
+DataStream& DataStream::operator>>(bool& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(char& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(int32_t& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(int64_t& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(float& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(double& value)
+{
+  read(value);
+  return *this;
+}
+
+DataStream& DataStream::operator>>(std::string& value)
+{
+  read(value);
+  return *this;
 }
 
