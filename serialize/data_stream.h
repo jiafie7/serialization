@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "serialize/serializable.h"
+
 namespace melon
 {
   namespace serialize
@@ -27,7 +29,8 @@ namespace melon
           vector_type,
           list_type,
           map_type,
-          set_type
+          set_type,
+          custom_type
         };
         
         DataStream();
@@ -53,6 +56,8 @@ namespace melon
         
         template <typename T>
         void write(const std::set<T>& value);
+
+        void write(const Serializable& value);
        
         DataStream& operator<<(bool value);
         DataStream& operator<<(char value);
@@ -74,9 +79,13 @@ namespace melon
         template <typename T>
         DataStream& operator<<(const std::set<T>& value);
         
+        DataStream& operator<<(const Serializable& value); 
+        
+
         void show() const;
 
-        // bool read(const char* data, int len);
+
+        bool read(char* data, int len);
         bool read(bool& value);
         bool read(char& value);
         bool read(int32_t& value);
@@ -96,6 +105,7 @@ namespace melon
         template <typename T>
         bool read(std::set<T>& value);
 
+        bool read(Serializable& value);
 
         DataStream& operator>>(bool& value);
         DataStream& operator>>(char& value);
@@ -116,6 +126,7 @@ namespace melon
         template <typename T>
         DataStream& operator>>(std::set<T>& value);
 
+        DataStream& operator>>(Serializable& value);
 
       private:
         void reserve(int len);

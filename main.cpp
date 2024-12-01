@@ -1,4 +1,5 @@
 #include "serialize/data_stream.h"
+#include "serialize/custom_type.h"
 
 using namespace melon::serialize;
 
@@ -21,6 +22,14 @@ int main()
   ds2 >> v2;
   for (auto it = v2.begin(); it != v2.end(); ++ it)
     std::cout << *it << '\n';
+
+  A a1("Michael", 27);
+  DataStream ds3;
+  ds3 << a1;
+
+  A a2;
+  ds3 >> a2;
+  a2.show();
   
   return 0;
 }

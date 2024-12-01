@@ -72,6 +72,11 @@ void DataStream::write(const std::string& value)
   write(value.c_str());
 }
 
+void DataStream::write(const Serializable& value)
+{
+  value.serialize(*this);
+}
+
 DataStream& DataStream::operator<<(bool value)
 {
   write(value);
@@ -119,6 +124,13 @@ DataStream& DataStream::operator<<(const std::string& value)
   write(value);
   return *this;
 }
+
+DataStream& DataStream::operator<<(const Serializable& value)
+{
+  write(value);
+  return *this;
+}
+
 
 void DataStream::show() const
 {
@@ -175,6 +187,13 @@ void DataStream::show() const
         break;
     }
   }
+}
+
+bool DataStream::read(char* data, int len)
+{
+  std::memcpy(data, (char*)(&m_buffer[m_index]), len);
+  m_index += len;
+  return true;
 }
 
 bool DataStream::read(bool& value)
@@ -253,28 +272,9 @@ bool DataStream::read(std::string& value)
   return true;
 }
 
-// bool DataStream::read(const char* data, int len)
-// {
-//   std::memcpy(data, (char*)(&m_buffer[m_index]), len);
-//   m_index += len;
-//   return true;
-// }
-
-void DataStream::reserve(int len)
+bool DataStream::read(Serializable& value)
 {
-  int size = m_buffer.size();
-  int capacity = m_buffer.capacity();
-  if (capacity < size + len)
-  {
-    while (capacity < size + len)
-    {
-      if (capacity == 0)
-        capacity = 1;
-      else
-        capacity *= 2;
-    }
-    m_buffer.reserve(capacity);
-  }
+  return value.unserialize(*this);
 }
 
 DataStream& DataStream::operator>>(bool& value)
@@ -317,5 +317,28 @@ DataStream& DataStream::operator>>(std::string& value)
 {
   read(value);
   return *this;
+}
+
+DataStream& DataStream::operator>>(Serializable& value)
+{
+  read(value);
+  return *this;
+}
+
+void DataStream::reserve(int len)
+{
+  int size = m_buffer.size();
+  int capacity = m_buffer.capacity();
+  if (capacity < size + len)
+  {
+    while (capacity < size + len)
+    {
+      if (capacity == 0)
+        capacity = 1;
+      else
+        capacity *= 2;
+    }
+    m_buffer.reserve(capacity);
+  }
 }
 
