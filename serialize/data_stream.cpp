@@ -4,7 +4,9 @@ using namespace melon::serialize;
 
 DataStream::DataStream()
   : m_index(0)
-{}
+{
+  m_byte_order = set_byte_order();
+}
 
 void DataStream::write(const char* data, int len)
 {
@@ -32,6 +34,13 @@ void DataStream::write(int32_t value)
 {
   char type = DataType::int32_type;
   write((char*)(&type), sizeof(char));
+  
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(int32_t);
+    std::reverse(first, last);
+  }
   write((char*)(&value), sizeof(int32_t));
 }
 
@@ -39,6 +48,12 @@ void DataStream::write(int64_t value)
 {
   char type = DataType::int64_type;
   write((char*)(&type), sizeof(char));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(int64_t);
+    std::reverse(first, last);
+  }
   write((char*)(&value), sizeof(int64_t));
 }
 
@@ -46,6 +61,12 @@ void DataStream::write(float value)
 {
   char type = DataType::float_type;
   write((char*)(&type), sizeof(char));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(float);
+    std::reverse(first, last);
+  }
   write((char*)(&value), sizeof(float));
 }
 
@@ -53,6 +74,12 @@ void DataStream::write(double value)
 {
   char type = DataType::double_type;
   write((char*)(&type), sizeof(char));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(double);
+    std::reverse(first, last);
+  }
   write((char*)(&value), sizeof(double));
 }
 
@@ -222,6 +249,12 @@ bool DataStream::read(int32_t& value)
     return false;
   ++ m_index;
   value = *((int32_t*)(&m_buffer[m_index]));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(int32_t);
+    std::reverse(first, last);
+  }
   m_index += 4;
   return true;
 }
@@ -232,6 +265,12 @@ bool DataStream::read(int64_t& value)
     return false;
   ++ m_index;
   value = *((int64_t*)(&m_buffer[m_index]));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(int64_t);
+    std::reverse(first, last);
+  }
   m_index += 8;
   return true;
 }
@@ -242,6 +281,12 @@ bool DataStream::read(float& value)
     return false;
   ++ m_index;
   value = *((float*)(&m_buffer[m_index]));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(float);
+    std::reverse(first, last);
+  }
   m_index += 4;
   return true;
 }
@@ -252,6 +297,12 @@ bool DataStream::read(double& value)
     return false;
   ++ m_index;
   value = *((double*)(&m_buffer[m_index]));
+  if (m_byte_order == ByteOrder::big_endian)
+  {
+    char* first = (char*)(&value);
+    char* last = first + sizeof(double);
+    std::reverse(first, last);
+  }
   m_index += 8;
   return true;
 }
@@ -384,5 +435,16 @@ void DataStream::reserve(int len)
     }
     m_buffer.reserve(capacity);
   }
+}
+
+DataStream::ByteOrder DataStream::set_byte_order()
+{
+  int a = 0x12345678;
+  char str[4] = { 0 };
+  std::memcpy(str, &a, sizeof(int));
+  if (str[0] == 0x12)
+    return ByteOrder::big_endian;
+  else
+    return ByteOrder::little_endian;
 }
 

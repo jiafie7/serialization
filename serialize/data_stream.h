@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -34,6 +35,13 @@ namespace melon
           set_type,
           custom_type
         };
+
+        enum ByteOrder
+        {
+          big_endian,
+          little_endian
+        };
+
         
         DataStream();
         ~DataStream() = default;
@@ -149,10 +157,12 @@ namespace melon
 
       private:
         void reserve(int len);
+        ByteOrder set_byte_order();
 
       private:
         std::vector<char> m_buffer;
         int m_index;
+        ByteOrder m_byte_order;
     };
 
     template <typename T>
@@ -350,6 +360,5 @@ namespace melon
       read(value);
       return *this;
     }
-
   }
 }
