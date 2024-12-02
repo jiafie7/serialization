@@ -1,10 +1,12 @@
 #pragma once
 
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -137,6 +139,13 @@ namespace melon
         DataStream& operator>>(std::set<T>& value);
 
         DataStream& operator>>(Serializable& value);
+
+        const char* data() const;
+        int size() const;
+        void clear();
+        void reset();
+        void save(const std::string& filename);
+        void load(const std::string& filename);
 
       private:
         void reserve(int len);

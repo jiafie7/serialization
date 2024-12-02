@@ -325,6 +325,50 @@ DataStream& DataStream::operator>>(Serializable& value)
   return *this;
 }
 
+const char* DataStream::data() const
+{
+  return m_buffer.data();
+}
+
+int DataStream::size() const
+{
+  return m_buffer.size();
+}
+
+void DataStream::clear()
+{
+  m_buffer.clear();
+  m_index = 0;
+}
+
+void DataStream::reset()
+{
+  m_index = 0;
+}
+
+void DataStream::save(const std::string& filename)
+{
+  std::ofstream ofs(filename);
+  if (ofs.fail())
+    throw std::logic_error("Open file failed: " + filename); 
+  ofs.write(data(), size());
+  ofs.flush();
+  ofs.close();
+}
+
+void DataStream::load(const std::string& filename)
+{
+  std::ifstream ifs(filename);
+  if (ifs.fail())
+    throw std::logic_error("Load file failed: " + filename);
+  std::ostringstream oss;
+  oss << ifs.rdbuf();
+  const std::string& str = oss.str();
+  reserve(str.size());
+  write(str.data(), str.size());
+}
+
+
 void DataStream::reserve(int len)
 {
   int size = m_buffer.size();

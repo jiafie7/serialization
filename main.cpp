@@ -34,8 +34,12 @@ int main()
   Fruit f1("Banana", "yellow");
   DataStream ds4;
   ds4 << f1;
+  ds4.save("./../fruit.out");
+  
   Fruit f2;
-  ds4 >> f2;
+  DataStream ds5;
+  ds5.load("./../fruit.out");
+  ds5 >> f2;
   f2.show();
   
   return 0;
